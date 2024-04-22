@@ -56,6 +56,14 @@
         <label for="event_id">Выберите мероприятие:</label>
         <select name="event_id" id="event_id" required>
             <?php
+            /**
+ * Обрабатывает запись пользователя на мероприятие
+ *
+ * @param int $event_id ID мероприятия
+ * @param string $name Имя пользователя
+ * @param string $email Email пользователя
+ * @return string Результат обработки записи на мероприятие
+ */
             // Подключение к базе данных
             $connection = mysqli_connect("localhost", "root", "", "event_platform");
 

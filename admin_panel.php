@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Административная панель</title>
     <style>
-        body {
+       body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             margin: 0;
@@ -62,13 +62,20 @@
         tr:hover {
             background-color: #f2f2f2;
         }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <h1>Административная панель</h1>
+
     <!-- Форма для добавления мероприятия -->
     <form action="handle_add_event.php" method="post">
-        <!-- Поля для ввода данных о мероприятии -->
         <label for="event_name">Название мероприятия:</label>
         <input type="text" id="event_name" name="event_name" required><br>
         <label for="event_price">Цена:</label>
@@ -80,48 +87,60 @@
         <button type="submit">Добавить мероприятие</button>
     </form>
 
-    <!-- Таблица для просмотра зарегистрированных пользователей -->
+    <!-- Таблица для просмотра и управления мероприятиями -->
     <table>
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Имя</th>
-                <th>Email</th>
-                <th>Мероприятие</th>
+                <th>Название</th>
+                <th>Цена</th>
+                <th>Количество мест</th>
+                <th>Дата и время</th>
+                <th>Действия</th>
             </tr>
         </thead>
         <tbody>
-            <!-- Вывод данных о зарегистрированных пользователях -->
             <?php
-           // Подключение к базе данных
-           $connection = mysqli_connect("localhost", "root", "", "event_platform");
+               /**
+             * Функция для вывода списка мероприятий в таблицу.
+             *
+             * Эта функция извлекает список мероприятий из базы данных и выводит их в виде таблицы.
+             * Каждое мероприятие представлено в виде строки таблицы с указанием его ID, названия, цены,
+             * количества мест, даты и времени. Для каждого мероприятия также добавлена ссылка на
+             * страницу редактирования.
+             *
+             * @param mysqli $connection Соединение с базой данных.
+             */
+            // Подключение к базе данных
+            $connection = mysqli_connect("localhost", "root", "", "event_platform");
 
-           // Проверка подключения
-           if (!$connection) {
-               die("Ошибка подключения: " . mysqli_connect_error());
-           }
+            // Проверка подключения
+            if (!$connection) {
+                die("Ошибка подключения: " . mysqli_connect_error());
+            }
 
-           // Запрос на получение данных о зарегистрированных пользователях
-           $sql = "SELECT users.id, users.name, users.email, events.name AS event_name FROM event_records
-                   JOIN users ON event_records.user_id = users.id
-                   JOIN events ON event_records.event_id = events.id";
-           $result = mysqli_query($connection, $sql);
+            // Получение списка мероприятий из базы данных
+            $sql = "SELECT * FROM events";
+            $result = mysqli_query($connection, $sql);
 
-           // Вывод данных в таблицу
-           while ($row = mysqli_fetch_assoc($result)) {
-               echo "<tr>";
-               echo "<td>{$row['id']}</td>";
-               echo "<td>{$row['name']}</td>";
-               echo "<td>{$row['email']}</td>";
-               echo "<td>{$row['event_name']}</td>";
-               echo "</tr>";
-           }
+            // Вывод данных о мероприятиях в таблицу
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo "<tr>";
+                echo "<td>{$row['id']}</td>";
+                echo "<td>{$row['name']}</td>";
+                echo "<td>{$row['price']}</td>";
+                echo "<td>{$row['number_seats']}</td>";
+                echo "<td>{$row['date']}</td>";
+                echo "<td>";
+                echo "<a href='edit_event.php?id={$row['id']}'>Редактировать</a>";
+                echo "</td>";
+                echo "</tr>";
+            }
 
-           // Закрытие соединения с базой данных
-           mysqli_close($connection);
-           ?>
+            // Закрытие соединения с базой данных
+            mysqli_close($connection);
+            ?>
         </tbody>
     </table>
-    
 </body>
 </html>
